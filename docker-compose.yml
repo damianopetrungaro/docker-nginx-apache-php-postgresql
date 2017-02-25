@@ -1,0 +1,34 @@
+version: '3'
+services:
+  appname_api:
+    build:
+      context: ./api
+    container_name: appname_api
+    ports:
+      - "8080:80"
+    volumes:
+      - ./api/:/var/www/api
+    networks:
+      - appname
+  appname_app:
+    build:
+      context: ./app
+    container_name: appname_app
+    ports:
+      - "80:80"
+    volumes:
+      - ./app/dist/:/var/www/html
+    networks:
+      - appname
+  appname_postgresql:
+    image: postgres:latest
+    container_name: appname_postgresql
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql/:/var/lib/postgresql/data
+    networks:
+      - appname
+networks:
+  appname:
+    driver: "bridge"
