@@ -8,6 +8,8 @@ services:
       - "8080:80"
     volumes:
       - ./api/:/var/www/api
+    env_file:
+      - ./evironments/application.env
     networks:
       - appname
   appname_app:
@@ -18,6 +20,9 @@ services:
       - "80:80"
     volumes:
       - ./app/dist/:/var/www/html
+    env_file:
+      - ./evironments/application.env
+    command: /bin/bash -c 'envsubst < /etc/nginx/env/app.template > /etc/nginx/conf.d/app.conf && nginx -g "daemon off;"'
     networks:
       - appname
   appname_postgresql:
@@ -27,6 +32,8 @@ services:
       - "5432:5432"
     volumes:
       - ./postgresql/:/var/lib/postgresql/data
+    env_file:
+      - ./evironments/postgresql.env
     networks:
       - appname
 networks:
