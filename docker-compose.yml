@@ -1,34 +1,51 @@
 version: '3'
 services:
-  appname_api:
+  api:
     build:
       context: ./api
-    container_name: appname_api
+    container_name: ${API_CONTAINER_NAME}
     ports:
       - "8080:80"
     volumes:
       - ./api/:/var/www/api
+    environment:
+      API_SERVER_NAME: ${API_SERVER_NAME}
+      POSTGRESQL_CONTAINER_NAME: ${API_CONTAINER_NAME}
     networks:
-      - appname
-  appname_app:
+      - api
+      - postgresql
+  app:
     build:
       context: ./app
-    container_name: appname_app
+    container_name: ${APP_CONTAINER_NAME}
     ports:
       - "80:80"
     volumes:
       - ./app/dist/:/var/www/html
+    environment:
+      APP_SERVER_NAME: ${APP_SERVER_NAME}
+      API_SERVER_NAME: ${API_SERVER_NAME}
+      API_CONTAINER_NAME: ${API_CONTAINER_NAME}
+    command: /bin/bash -c "envsubst '$$APP_SERVER_NAME $$API_CONTAINER_NAME $$API_SERVER_NAME' < /etc/nginx/conf.d/app.template > /etc/nginx/conf.d/app.conf && nginx -g 'daemon off;'"
     networks:
-      - appname
-  appname_postgresql:
+      - app
+      - api
+  postgresql:
     image: postgres:latest
-    container_name: appname_postgresql
+    container_name: ${POSTGRESQL_CONTAINER_NAME}
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./postgresql/:/var/lib/postgresql/data
     networks:
-      - appname
+      - postgresql
 networks:
-  appname:
+  app:
+    driver: "bridge"
+  api:
+    driver: "bridge"
+  postgresql:
     driver: "bridge"
