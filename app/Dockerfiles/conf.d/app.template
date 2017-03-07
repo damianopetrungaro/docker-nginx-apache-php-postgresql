@@ -2,7 +2,7 @@ server {
     listen 80;
     listen [::]:80;
 
-    server_name ${APP_SERVER_NAME};
+    server_name "${APP_SERVER_NAME}";
 
     root /var/www/html;
     index index.html index.nginx-debian.html;
@@ -16,9 +16,9 @@ server {
     listen 80;
     listen [::]:80;
 
-    server_name ${API_SERVER_NAME};
+    server_name "${API_SERVER_NAME}";
 
     location / {
-        proxy_pass http://appname_api;
+        proxy_pass http://${API_CONTAINER_NAME};
     }
 }

@@ -7,6 +7,11 @@ By default the applications name will be "***appname***", if you want to use a c
 - ***./docker-compose*** 
 - ***./app/Dockerfiles/conf.d/app.conf*** 
 
+## Environment
+The env variables are into - ***.env*** file.
+ The *** application.env ** is used for the domain name.
+ The *** postgresql.env ** is used for the postgresql container.
+
 ## Frontend
 The first image is an official nginx image, with simply added a custom .conf file,
 the .conf file defines a proxy for all the http requests that will be prefixed by "api."
