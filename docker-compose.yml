@@ -12,8 +12,7 @@ services:
       API_SERVER_NAME: ${API_SERVER_NAME}
       POSTGRESQL_CONTAINER_NAME: ${API_CONTAINER_NAME}
     networks:
-      - api
-      - postgresql
+      - back
   app:
     build:
       context: ./app
@@ -28,8 +27,8 @@ services:
       API_CONTAINER_NAME: ${API_CONTAINER_NAME}
     command: /bin/bash -c "envsubst '$$APP_SERVER_NAME $$API_CONTAINER_NAME $$API_SERVER_NAME' < /etc/nginx/conf.d/app.template > /etc/nginx/conf.d/app.conf && nginx -g 'daemon off;'"
     networks:
-      - app
-      - api
+      - front
+      - back
   postgresql:
     image: postgres:latest
     container_name: ${POSTGRESQL_CONTAINER_NAME}
@@ -41,11 +40,9 @@ services:
     volumes:
       - ./postgresql/:/var/lib/postgresql/data
     networks:
-      - postgresql
+      - back
 networks:
-  app:
+  front:
     driver: "bridge"
-  api:
-    driver: "bridge"
-  postgresql:
+  back:
     driver: "bridge"
